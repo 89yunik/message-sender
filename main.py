@@ -1,11 +1,10 @@
 from logging_config import setup_logging
 from decorators import handle_exceptions
 
-# 로깅 설정
 logger = setup_logging()
 
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QTextEdit, QVBoxLayout, QPushButton, QLineEdit, QLabel, QComboBox
+from PyQt5.QtWidgets import QApplication, QWidget, QTextEdit, QVBoxLayout, QPushButton, QLineEdit, QLabel, QHBoxLayout
 from PyQt5.QtGui import QFont
 
 class MessageSenderWindow(QWidget):
@@ -15,35 +14,30 @@ class MessageSenderWindow(QWidget):
 
         self.layout = QVBoxLayout()
 
-        # 제목 입력
-        self.layout.addWidget(QLabel("메일 제목"))
+        self.layout.addWidget(QLabel("메시지 제목"))
         self.subject_entry = QLineEdit()
         self.layout.addWidget(self.subject_entry)
 
-        # 메시지 내용 입력
         self.layout.addWidget(QLabel("메시지 내용"))
         self.text_edit = QTextEdit()
         self.text_edit.setFont(QFont("Arial", 12))
         self.layout.addWidget(self.text_edit)
 
-        # 발송 방식 선택 (이메일 / 문자)
-        self.layout.addWidget(QLabel("발송 방식 선택"))
-        self.combo = QComboBox()
-        self.combo.addItems(["이메일", "문자"])
-        self.layout.addWidget(self.combo)
-
-        # 발송 버튼
-        self.send_button = QPushButton("보내기")
-        # self.send_button.clicked.connect(self.send_message)
-        self.layout.addWidget(self.send_button)
+        self.button_layout = QHBoxLayout()
+        self.send_email_button = QPushButton("이메일")
+        # self.send_email_button.clicked.connect(self.send_email)
+        self.send_sms_button = QPushButton("문자")
+        self.send_sms_button.clicked.connect(self.send_sms)
+        self.button_layout.addWidget(self.send_email_button)
+        self.button_layout.addWidget(self.send_sms_button)
+        self.layout.addLayout(self.button_layout)
 
         self.setLayout(self.layout)
 
-    # def send_message(self):
-    #     recipient = self.receiver_entry.text()
+    # def send_sms(self):
     #     subject = self.subject_entry.text()
     #     body = self.text_edit.toPlainText()
-    #     send_method = self.combo.currentText()
+        # body = self.text_edit.toHtml()
 
     #     if send_method == "이메일":
     #         # 이메일 발송
