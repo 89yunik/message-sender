@@ -3,7 +3,7 @@ from decorators import handle_exceptions
 
 logger = setup_logging()
 
-import sys
+import sys, base64, re
 from PyQt5.QtWidgets import QApplication, QWidget, QTextEdit, QVBoxLayout, QPushButton, QLineEdit, QLabel, QHBoxLayout
 from PyQt5.QtGui import QFont
 
@@ -25,28 +25,40 @@ class MessageSenderWindow(QWidget):
 
         self.button_layout = QHBoxLayout()
         self.send_email_button = QPushButton("이메일")
-        # self.send_email_button.clicked.connect(self.send_email)
+        self.send_email_button.clicked.connect(self.send_email)
         self.send_sms_button = QPushButton("문자")
-        self.send_sms_button.clicked.connect(self.send_sms)
+        # self.send_sms_button.clicked.connect(self.send_sms)
         self.button_layout.addWidget(self.send_email_button)
         self.button_layout.addWidget(self.send_sms_button)
         self.layout.addLayout(self.button_layout)
 
         self.setLayout(self.layout)
 
-    # def send_sms(self):
-    #     subject = self.subject_entry.text()
-    #     body = self.text_edit.toPlainText()
-        # body = self.text_edit.toHtml()
+    def send_email(self):
+        subject = self.subject_entry.text()
+        # body = self.text_edit.toPlainText()
+        html_content = self.text_edit.toHtml()
+        modified_html_content = self.convert_images_to_base64(html_content)
+        # # 이메일 발송
+        # email_sender = EmailSender("smtp.gmail.com", 587, "your_email@gmail.com", "your_password")
+        # email_sender.send_email(recipient, subject, body)
+        # # 문자 발송
+        # sms_sender = SmsSender("your_twilio_sid", "your_twilio_token", "your_twilio_number")
+        # sms_sender.send_sms(recipient, body)
+    
+    def convert_images_to_base64(self, html_content):
+        img_tag_pattern = r'<img\s+[^>]*src=["\'](file://[^"\']+)["\'][^>]*>'
+        img_paths = re.findall(img_tag_pattern, html_content)
+        
+        for img_path in img_paths:
+            file_path = img_path[8:] # 파일 경로에서 'file://' 제거
+            with open(file_path, "rb") as img_file:
+                encoded_string = base64.b64encode(img_file.read()).decode()
 
-    #     if send_method == "이메일":
-    #         # 이메일 발송
-    #         email_sender = EmailSender("smtp.gmail.com", 587, "your_email@gmail.com", "your_password")
-    #         email_sender.send_email(recipient, subject, body)
-    #     elif send_method == "문자":
-    #         # 문자 발송
-    #         sms_sender = SmsSender("your_twilio_sid", "your_twilio_token", "your_twilio_number")
-    #         sms_sender.send_sms(recipient, body)
+            base64_img_tag = f'data:image/png;base64,{encoded_string}'
+            html_content = html_content.replace(img_path, base64_img_tag)
+        
+        return html_content
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
