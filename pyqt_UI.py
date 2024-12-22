@@ -133,8 +133,8 @@ class MessageSenderWindow(QWidget):
         self.result_label.setText("문자 전송 중...")
         message = f'{self.subject_entry.text()}\n{self.text_edit.toPlainText()}'
         recipients = [recipeint_info['phone'] for recipeint_info in self.manager.recipients]
-        sms_sender = SmsSender(self.config['surem_id'], self.config['surem_company_code'], self.config['surem_sender']) 
-        result_message = sms_sender.send_sms(recipients, message, "https://rest.surem.com/messages/mms")
+        sms_sender = SmsSender(self.config['site_id'], self.config['site_company_code'], self.config['sender_address']) 
+        result_message = sms_sender.send_sms(recipients, message, self.config['api_url'])
         self.result_label.setText(result_message)
 
     def convert_images_to_base64(self, html_content):
