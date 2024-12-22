@@ -67,13 +67,13 @@ class SettingsDialog(QDialog):
         QMessageBox.information (self, "저장", "저장 완료")
 
     def add_recipient(self):
-        self.manager.add_recipient("이름", "0100000000", "example@sk.com")
+        self.manager.add_recipient("이름", "0100000000", "example@google.com")
         self.load_data()
 
     def delete_selected(self):
         selected_rows = self.table.selectionModel().selectedRows()
         for index in sorted(selected_rows, reverse=True):
-            self.manager.delete_recipient (index.row())
+            self.manager.delete_recipient(index.row())
             self.load_data()
 
 
